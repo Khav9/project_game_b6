@@ -162,3 +162,73 @@ def level_one(event):
     create_bom()
     gravity()
     winsound.PlaySound("sound/start.wav",winsound.SND_FILENAME | winsound.SND_ASYNC)
+def level_two(event):
+    global player_X,player_Y,canLive,toConfig,totalCash,totalBom,isStart,listOfLives,listOfCash,listOfBom,player,displayTotalCash
+    isStart = True
+    player_X = 150
+    player_Y = 650
+    canLive = 6
+    toConfig = 0
+    totalCash = 0
+    totalBom = 0
+    listOfLives = []
+    listOfCash = []
+    listOfBom = []
+    canvas.delete("all")
+    canvas.create_image(680, 372,  image=game_level2)
+    player = canvas.create_image(player_X, player_Y, image=hero)
+    canvas.create_image(690, 740, image=way_player_l2, tags="PLATFORM")
+    canvas.create_image(390, 640, image=way_car, tags="PLATFORM")
+    canvas.create_image(1200, 640, image=parash, tags="PLATFORM")
+    displayTotalCash = canvas.create_text(1200, 75, text=totalCash, font=("serif", 18 ,'bold'), fill="white")
+    for i in range(6):
+        lives = canvas.create_image(80 + i * 100, 70, image=heard)
+        listOfLives.append(lives)
+
+    create_fruit()
+    create_bom()
+    gravity()
+    
+    winsound.PlaySound("sound/start.wav",winsound.SND_FILENAME | winsound.SND_ASYNC)
+def level_three(event):
+    global player,displayTotalCash,background_image_label_1,background_image_label_2,background_street_1,background_street_2
+    background_image_label_1= canvas.create_image(0, 0,anchor=tk.NW, image=background_image)
+    background_image_label_2= canvas.create_image(SCREEN_WIDTH,0,anchor=tk.NW, image=background_image)
+    player = canvas.create_image(player_X, player_Y, image=hero)
+    background_street_1= canvas.create_image(0, 650,anchor=tk.NW, image=way_player_l3,tags="PLATFORM")
+    background_street_2= canvas.create_image(SCREEN_WIDTH,650,anchor=tk.NW, image=way_player_l3,tags="PLATFORM")   
+    canvas.create_image(1150,70,image=sum_score)   
+    displayTotalCash = canvas.create_text(1225, 70, text=totalCash, font=("serif", 18 ,'bold'), fill="white")
+
+    for i in range(6):
+        lives = canvas.create_image(80 + i * 100, 70, image=heard)
+        listOfLives.append(lives)
+    
+    create_fruit()
+    create_bom()
+    gravity()
+    scroll_bg_image()
+    scroll_street_image()
+    winsound.PlaySound("sound/start.wav",winsound.SND_FILENAME | winsound.SND_ASYNC)
+    
+# _____________________Game Win ____________________________
+
+def win_game():
+    global player_X,player_Y,canLive,toConfig,totalCash,totalBom,isStart,listOfLives,listOfCash,listOfBom,player,displayTotalCash
+    canvas.delete("all")
+    canvas.create_image(680, 372, image=win_page)
+    canvas.create_text(810, 366, text=totalCash, font=("serif", 34 ,'bold'), fill="black")
+    canvas.create_image(250,520,image=btn_back_win, tags="back_to_chose_level")    
+    canvas.create_image(680,520,image=btn_exit_game, tags="exit")
+    canvas.create_image(1120,520,image=btn_next_level, tags="next_to_l2")
+
+# _________________________ Game Over _____________________________
+
+def gameOver():
+    global isStart
+    isStart = False
+    canvas.delete("all")
+    canvas.create_image(680, 372, image=game_over)
+    canvas.create_text(830, 535, text=totalCash, font=("serif", 34 ,'bold'), fill="black")
+    canvas.create_image(120,100, image=btn_back_new, tags="back_to_level")
+        
