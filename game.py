@@ -231,4 +231,164 @@ def gameOver():
     canvas.create_image(680, 372, image=game_over)
     canvas.create_text(830, 535, text=totalCash, font=("serif", 34 ,'bold'), fill="black")
     canvas.create_image(120,100, image=btn_back_new, tags="back_to_level")
+
+# _______________________Game Help____________________
+
+def bar_help(event):
+    canvas.delete("all")
+    canvas.create_image(680, 372, image=game_help)
+    canvas.create_image(130, 50, image=btn_back, tags="back")
+
+# __________________ Game Exit_______________
+
+def gameExit(event):
+    root.destroy()
+
+#_____________________________________Scrolling backgroud__________________________________________
+def scroll_bg_image():
+    canvas.move(background_image_label_1, -1, 0)
+    canvas.move(background_image_label_2, -1, 0)
+    if canvas.coords(background_image_label_1)[0]< -SCREEN_WIDTH:
+        canvas.coords(background_image_label_1, SCREEN_WIDTH, 0)
+    elif canvas.coords(background_image_label_2)[0]< -SCREEN_WIDTH:
+        canvas.coords(background_image_label_2, SCREEN_WIDTH, 0)
+    
+    canvas.after(20, scroll_bg_image)
+    
+#_________________Scrolling the way__________________
+
+def scroll_street_image():
+    canvas.move(background_street_1, -1, 0)
+    canvas.move(background_street_2, -1, 0)
+    if canvas.coords(background_street_1)[0]< -SCREEN_WIDTH:
+        canvas.coords(background_street_1, SCREEN_WIDTH, 700)
+    elif canvas.coords(background_street_2)[0]< -SCREEN_WIDTH:
+        canvas.coords(background_street_2, SCREEN_WIDTH, 650)
+    elif canvas.coords(background_street_1)[0]< -SCREEN_WIDTH:
+        canvas.coords(background_street_1, SCREEN_WIDTH, 700)
+    elif canvas.coords(background_street_2)[0]< -SCREEN_WIDTH:
+        canvas.coords(background_street_2, SCREEN_WIDTH, 650)
+    canvas.after(1, scroll_street_image)
+
+#________________________________Player Jump______________________________________
+
+def check_movement(dx = 0, dy = 0, checkGround = False):
+    global player
+    coord = canvas.coords(player)
+    platforms = canvas.find_withtag("PLATFORM")
+    if coord[0] + dx < 46 or coord[0] + dx >= SCREEN_WIDTH-100:
+        return False
+    if checkGround:
+        overlap = canvas.find_overlapping(coord[0], coord[1], coord[0]+20+ dx, coord[1] +21+ dy)
+    else:
+        overlap = canvas.find_overlapping(coord[0]+dx, coord[1]+dy, coord[0]-dx, coord[1]-hero.width())
+
+    for platform in platforms:
+        if platform in overlap:
+            return False
+    return True
+
+def jump(force):
+    if force > 0:
+        if check_movement(0, -force):
+            canvas.move(player, 0, -force)
+            root.after(TIMED_LOOP, jump, force-1)
+
+def start_move(event):
+    if event.keysym not in keyPressed:
+        keyPressed.append(event.keysym)
+        if len(keyPressed) == 1:
+            move()
+
+def move():
+    if not keyPressed == []:
+        x = 0
+        if "space" in keyPressed and not check_movement(0, GRAVITY_FORCE, True):
+            jump(JUMP_FORCE)
+        elif "Right" in keyPressed:
+            canvas.itemconfig(player,image=hero)
+            x += SPEED
+
+        elif "Left" in keyPressed:
+            canvas.itemconfig(player,image=hero_left)
+            x -= SPEED
+        if check_movement(x):
+            canvas.move(player, x, 0)
+        root.after(TIMED_LOOP, move)
+
+def gravity():
+    if check_movement(0, GRAVITY_FORCE, True):
+        canvas.move(player, 0, GRAVITY_FORCE)
+    root.after(TIMED_LOOP, gravity)
+
+def stop_move(event):
+    global keyPressed
+    if event.keysym in keyPressed:
+        keyPressed.remove(event.keysym)
+
+# ___________________________ Delete, bom, Cash ________________________
+def delete_item(item):
+    canvas.delete(item)
+
+# _______________________________Create Fruit___________________________________
+def create_fruit():
+    global count_create_fruit, enamy_x 
+    count_create_fruit += 1
+    enamy_y = randrange(360,655)
+    speed_create = randrange(1500,3600)
+    cash =canvas.create_image(enamy_x,enamy_y, image=fruits[random.randrange(0,4)] )
+    move_fruit(cash)
+    if isStart and count_create_fruit < 300:
+        canvas.after(speed_create, lambda:create_fruit())
         
+# _________________Move Fruit ________________
+def move_fruit(fruit):
+    global totalCash
+    canvas.move(fruit, -5, 0)
+    listOfCash.append(fruit)
+    positionCash = canvas.coords(fruit)
+    positionPlayer = canvas.coords(player)
+    score = randrange(3,9)
+    if len(positionCash) > 0:
+        if (positionPlayer[0]+10 >= positionCash[0] and positionPlayer[0]-30 <= positionCash[0]) and (positionPlayer[1] <= positionCash[1]+20 and positionPlayer[1] >=  positionCash[1]-80):
+            totalCash += score
+            delete_item(fruit)
+            canvas.itemconfig(displayTotalCash, text=totalCash)
+            winsound.PlaySound("sound/cash.wav",winsound.SND_FILENAME | winsound.SND_ASYNC)
+        elif positionCash[0] < 0:
+            delete_item(fruit)
+    canvas.after(30, lambda:move_fruit(fruit))  
+    
+# _____________________________________Create Boom______________________________________
+def create_bom():
+    global count_create_bom, enamy_x
+    count_create_bom += 1
+    enamy_y = randrange(420,580)
+    speed_create = randrange(4500,9000)
+    bom =canvas.create_image(enamy_x,enamy_y, image=boom_img )
+    move_bom(bom)
+    if isStart and count_create_bom < 50:
+        canvas.after(speed_create, lambda:create_bom())
+
+# _____________________________________Move Boom ______________________________________
+def move_bom(bom):
+    global totalBom,toConfig,canLive
+    canvas.move(bom, -4, 0)
+    listOfBom.append(bom)
+    positionBom = canvas.coords(bom)
+    positionPlayer = canvas.coords(player)
+    if len(positionBom) > 0:
+        if (positionPlayer[0] +20 >= positionBom[0] and positionPlayer[0]-20 <= positionBom[0]) and (positionPlayer[1]-20 <= positionBom[1]+20 and positionPlayer[1]+40 >=  positionBom[1]-20):
+            totalBom += 1
+            fire = canvas.create_image(positionBom[0],positionBom[1], image = fire_image)
+            canvas.after(600, lambda:delete_item(fire))
+            delete_item(bom)
+            winsound.PlaySound("sound/sick.wav",winsound.SND_FILENAME | winsound.SND_ASYNC)
+        if (positionPlayer[0] +20 >= positionBom[0] and positionPlayer[0]-20 <= positionBom[0]) and (positionPlayer[1]-20 <= positionBom[1]+20 and positionPlayer[1]+40 >=  positionBom[1]-20):
+            delete_item(bom)
+            toConfig -= 1
+            canLive -= 1
+            canvas.itemconfig(listOfLives[toConfig], image=heard_white_img)
+        elif positionBom[0] < 0:
+            delete_item(bom)
+    canvas.after(50, lambda:move_bom(bom))        
