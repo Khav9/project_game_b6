@@ -397,4 +397,42 @@ def move_bom(bom):
 def createCanLive():
     for i in range(canLive):
         live = canvas.create_image(i*700+45, 70,image=heard_white_img)
-        delete_item(live)       
+        delete_item(live) 
+
+#_____________________________CREATE GAME SHOW______________________________
+
+canvas.create_image(680, 372, image=game_start)
+canvas.create_image(680,280, image=btn_start_game, tags="startgame")
+canvas.create_image(680,410,image=btn_exit_game, tags="exit")
+canvas.create_image(680,540,image=btn_help_game, tags="help")
+winsound.PlaySound("sound/open.wav",winsound.SND_FILENAME | winsound.SND_ASYNC)
+
+#___________________________AUTO PLAY_____________________________________
+processGame()
+
+#_________________________ALLOW WINDOWS KEYS AND TAGES BIND____________________________
+
+root.bind("<Key>", start_move)
+root.bind("<KeyRelease>", stop_move)
+
+#______________________________________________________
+
+canvas.tag_bind("back_to_show_game","<Button-1>", gameShow)
+canvas.tag_bind("back","<Button-1>", gameShow)
+canvas.tag_bind("exit","<Button-1>", gameExit)
+canvas.tag_bind("help","<Button-1>", bar_help)
+canvas.tag_bind("startgame","<Button-1>", chose_levels)
+
+canvas.tag_bind("back_to_chose_level","<Button-1>", chose_levels)
+canvas.tag_bind("back_to_level","<Button-1>", chose_levels)
+
+canvas.tag_bind("level_1","<Button-1>", level_one)
+canvas.tag_bind("level_2","<Button-1>", level_two)
+canvas.tag_bind("level_3","<Button-1>", level_three)
+canvas.tag_bind('next_to_l2', '<Button-1>',level_two)
+canvas.tag_bind('next_to_l3', '<Button-1>',level_three)
+
+#__________________________Display ROOT________________________________
+
+canvas.pack(expand=True, fill='both')
+root.mainloop()      
