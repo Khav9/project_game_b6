@@ -105,3 +105,60 @@ isStart = True
 count_create_fruit = 0
 count_create_bom = 0
 keyPressed = []
+# ______________________________ Game Process _________________________________
+def processGame():  
+    if totalCash > 100 :
+        win_game()
+    if totalBom > 5:
+        gameOver()
+    canvas.after(100, processGame)
+
+# ____________________________________ Game Show ______________________________________
+def gameShow(event):
+    canvas.delete("all")
+    canvas.create_image(680, 372, image=game_start)
+    canvas.create_image(680,280, image=btn_start_game, tags="startgame")
+    canvas.create_image(680,410,image=btn_exit_game, tags="exit")
+    canvas.create_image(680,540,image=btn_help_game, tags="help")
+    
+#__________________Chose levels______________________
+
+def chose_levels(event):
+    global player_X,player_Y,canLive,toConfig,totalCash,totalBom,isStart,listOfLives,listOfCash,listOfBom,player,displayTotalCash
+    isStart = True
+    player_X = 150
+    player_Y = 450
+    canLive = 6
+    toConfig = 0
+    totalCash = 0
+    totalBom = 0
+    listOfLives = []
+    listOfCash = []
+    listOfBom = []
+    canvas.delete("all")
+    # interface page level
+    canvas.create_image(680, 372, image=level_page)
+    canvas.create_image(1250,70,image=btn_exit_lp, tags="exit")
+    canvas.create_image(140, 70, image=btn_back, tags="back_to_show_game")
+    #chose
+    canvas.create_image(680,250,image=btn_level1, tags="level_1")
+    canvas.create_image(680,400,image=btn_level2, tags="level_2")
+    canvas.create_image(680,550,image=btn_level3, tags="level_3")
+
+# ___________________________________ Game Start_________________________________
+
+def level_one(event):
+    global player, displayTotalCash,totalCash
+    canvas.delete("all")
+    canvas.create_image(680, 372,  image=game_play)
+    player = canvas.create_image(player_X, player_Y, image=hero)
+    canvas.create_image(150, 780, image=way_player,tags="PLATFORM")
+    canvas.create_image(700, 780, image=way_player,tags="PLATFORM")
+    displayTotalCash = canvas.create_text(1200, 75, text=totalCash, font=("serif", 18 ,'bold'), fill="black")
+    for i in range(6):
+        lives = canvas.create_image(80 + i * 100, 70, image=heard)
+        listOfLives.append(lives)
+    create_fruit()
+    create_bom()
+    gravity()
+    winsound.PlaySound("sound/start.wav",winsound.SND_FILENAME | winsound.SND_ASYNC)
