@@ -393,12 +393,6 @@ def move_bom(bom):
             delete_item(bom)
     canvas.after(50, lambda:move_bom(bom)) 
     
-# _______________________Draw Can Live _____________________
-def createCanLive():
-    for i in range(canLive):
-        live = canvas.create_image(i*700+45, 70,image=heard_white_img)
-        delete_item(live) 
-
 #_____________________________CREATE GAME SHOW______________________________
 
 canvas.create_image(680, 372, image=game_start)
